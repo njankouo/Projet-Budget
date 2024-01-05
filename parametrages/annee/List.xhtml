@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:messages id="growl" closable="true" />
+    <p:growl id="msg" />
+
+    <h:form id="ResultatregionListForm">
+        <p:panel header="LISTE DES ANNEES BUDGETAIRES">    
+
+            <p:contextMenu id="ResultatregionDataTableContextMenu" for="datalist">  
+                <p:menuitem value="#{langues.Create}" onclick="document.getElementById('ResultatregionListForm:createButton').click();" icon="ui-icon-plus"/>
+                <p:menuitem value="#{langues.View}" onclick="document.getElementById('ResultatregionListForm:viewButton').click();" icon="ui-icon-search"/>                
+                <p:menuitem value="#{langues.Edit}" onclick="document.getElementById('ResultatregionListForm:editButton').click();" icon="ui-icon-pencil"/>
+                <p:menuitem value="#{langues.Delete}" onclick="document.getElementById('ResultatregionListForm:deleteButton').click();" icon="ui-icon-trash"/>
+                <p:separator/>
+            </p:contextMenu>
+
+            <p:dataTable id="datalist"
+                         value="#{anneeController.annees}"
+                         var="item"                         
+                         rowKey="#{item.idannee}"
+                         paginator="true"
+                         rows="30"   
+                         rowIndexVar="index"
+                         rowsPerPageTemplate="10,20,30,40,50"
+                         selectionMode="single"
+                         style="width: 60% ; margin-left: 20%"
+                         selection="#{anneeController.annee}">
+
+                <p:ajax event="rowSelect"   update="@form:editButton,@form:ResultatregionDataTableContextMenu" listener="#{anneeController.activeButton()}"/>
+                <p:ajax event="rowUnselect" update="@form:editButton,@form:ResultatregionDataTableContextMenu" listener="#{anneeController.deactiveButton()}"/>
+                <p:ajax event="contextMenu" update="@form:editButton" />
+                <p:ajax event="rowDblselect" onsuccess="document.getElementById('ResultatregionListForm:viewButton').click();"/>
+
+                <p:column style=" width:60%" filterBy="#{item.nom}">
+                    <f:facet name="header">
+                        <h:outputText value="Nom"/>
+                    </f:facet>
+                    <h:outputText value="#{item.nom}"/>
+                </p:column>
+
+                <p:column style=" width:40%" filterBy="#{item.nom}">
+                    <f:facet name="header">
+                        <h:outputText value="Année budgetaire par défaut ?"/>
+                    </f:facet>
+                    <h:selectBooleanCheckbox disabled="true" value="#{item.budget}"/>
+                </p:column>
+
+            </p:dataTable>
+        </p:panel>
+
+        <center>            
+            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{langues.Edit}"  actionListener="#{anneeController.prepareEdit()}" update=":ResultatregionCreateForm"  oncomplete="PF('ResultatregionCreateDialog').show()" disabled="#{anneeController.detail}"/>
+        </center>
+
+        <ui:include src="/confirmation.xhtml"/>
+    </h:form>
+
+</ui:composition>

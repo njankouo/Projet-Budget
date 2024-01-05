@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ResultatregionCreateDlg" widgetVar="ResultatregionCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="ACTIVER / DESACTIVER UNE ANNEE" closeOnEscape="true">
+
+            <h:form id="ResultatregionCreateForm">
+
+                <h:panelGroup id="display" rendered="true">
+                    <p:panelGrid columns="2" columnClasses="column">
+
+                        <p:outputLabel value="Nom" for="nom" />
+                        <p:inputText disabled="true" style=" width: 100px"  id="nom" value="#{anneeController.annee.nom}" maxlength="254" required="true" requiredMessage="le champ nom est obligatoire"/>
+                        
+                        <p:outputLabel value="Etat" for="etat"/>
+                        <h:selectBooleanCheckbox id="etat" value="#{anneeController.annee.budget}"/>
+                        
+                    </p:panelGrid>
+                    
+                    <p:separator/>
+
+                    <p:commandButton style="float: right" actionListener="#{anneeController.save()}" value="#{langues.Save}" update="display,:ResultatregionListForm:datalist,:msg" oncomplete="PF('ResultatregionCreateDialog').hide()">
+                        <p:confirm header="#{langues.ConfirmationHeader}" message="#{langues.ConfirmCreateMessage}" icon="ui-icon-alert"/>
+                    </p:commandButton>
+
+                    <p:commandButton style="float: left" value="#{langues.Cancel}" onclick="PF('ResultatregionCreateDialog').hide()"/>
+                </h:panelGroup>
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

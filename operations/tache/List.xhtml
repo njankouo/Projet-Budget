@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+
+        <ui:define name="title">
+            <h:outputText value="Taches"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="TacheListForm">
+
+                <p:growl id="growl" showDetail="true"/>
+                <br/>
+                <center>
+                    <p:panelGrid columns="6">
+
+                        <p:outputLabel value="#{langues.structure}" for="structure" />
+                        <p:selectOneMenu filter="true" id="structure" value="#{tacheController.structure.idstructure}">
+                            <f:selectItem itemLabel="#{langues.choisir}" itemValue=""/>
+                            <f:selectItems value="#{tacheController.structures}" var="str" itemLabel="#{str.nom}" itemValue="#{str.idstructure}"/>                                                                             
+                            <p:ajax update="datalist"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="#{langues.chercher}" update="datalist,growl" actionListener="#{tacheController.findTache()}"/>
+
+                    </p:panelGrid>
+                </center>
+
+                <p:dataTable id="datalist" value="#{tacheController.taches}" var="item"                             
+                             paginator="true"
+                             rowKey="#{item.idtache}"
+                             selectionMode="single"
+                             selection="#{tacheController.tache}"
+                             rows="15"
+                             rowsPerPageTemplate="10,20,30,40,50"
+                             style="margin-top:1% !important; text-align:left; font-weight: bold; font-style: oblique;"
+                             rowIndexVar="index"
+                             emptyMessage="#{msg.Vide}">                                                          
+
+                    <p:ajax event="rowSelect" update="@form:createButton,@form:editButton,@form:deleteButton,datalist" listener="#{tacheController.activeButton()}"/>
+
+                    <f:facet name="header"> 
+                        <h:outputText value="#{langues.liste_taches}"/>
+                    </f:facet> 
+                    
+                    <p:column filterBy="#{item.nom}" style="width: 20%">
+                        <f:facet name="header">
+                            <h:outputText value="#{langues.programme}"/>
+                        </f:facet>
+                        <h:outputText class="hardBreak" value="#{item.idactivite.idaction.idprogramme.nom}"/>
+                    </p:column>
+                    
+                    <p:column filterBy="#{item.nom}" style="width: 20%">
+                        <f:facet name="header">
+                            <h:outputText value="#{langues.action}"/>
+                        </f:facet>
+                        <h:outputText class="hardBreak" value="#{item.idactivite.idaction.nom}"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.nom}" style="width: 35%">
+                        <f:facet name="header">
+                            <h:outputText value="#{langues.nom}"/>
+                        </f:facet>
+                        <h:outputText class="hardBreak" value="#{item.nom}"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.idbailleurfond.nom}" style="width: 10%">
+                        <f:facet name="header">
+                            <h:outputText class="hardBreak" value="#{langues.source_financement}"/>
+                        </f:facet>
+                        <h:outputText class="hardBreak" value="#{item.idbailleurfond.nom}"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.totalmontantaloue}" style="width: 10%">
+                        <f:facet name="header">
+                            <h:outputText value="#{langues.montant_total}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.totalmontantaloue}">
+                            <f:convertNumber />
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+
+                <center>
+                    <p:commandButton update=":TacheCreateForm,growl" id="createButton"  
+                                     value="#{langues.ajouter_une_tache}" 
+                                     actionListener="#{tacheController.prepareCreateTache()}"
+                                     icon="ui-icon-plus"/>
+
+                    <p:commandButton update=":TacheCreateForm,growl" id="editButton" 
+                                     value="#{langues.modifier}"  actionListener="#{tacheController.prepareEdit()}" 
+                                     disabled="#{tacheController.detail}"
+                                     icon="ui-icon-pencil"/>
+
+                    <p:commandButton update="datalist,growl,deleteButton,editButton" id="deleteButton" value="#{langues.supprimer}" actionListener="#{tacheController.deleteTache()}" disabled="#{tacheController.detail}" icon="ui-icon-trash">
+                        <p:confirm header="#{langues.ConfirmationHeader}" message="#{langues.ConfirmDeleteMessage}" icon="ui-icon-alert"/>
+                    </p:commandButton>
+
+                </center>
+
+                <ui:include src="/confirmation.xhtml"/>
+            </h:form>
+
+            <ui:include src="/operations/tache/Create.xhtml"/>
+            <ui:include src="/operations/tache/Createparagraphe.xhtml"/>
+
+        </ui:define>
+    </ui:composition>
+
+</html>
